@@ -5,6 +5,7 @@ class Note {
   final String title;
   final String content;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final Category? category;
 
   Note({
@@ -12,6 +13,7 @@ class Note {
     required this.title,
     required this.content,
     required this.createdAt,
+    required this.updatedAt,
     this.category,
   });
 
@@ -23,6 +25,7 @@ class Note {
       title: json['title'] as String,
       content: json['content'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
       category: categoryJson == null
           ? null
           : Category.fromJson(categoryJson as Map<String, dynamic>),

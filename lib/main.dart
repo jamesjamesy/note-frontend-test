@@ -453,8 +453,20 @@ class _NotesPageState extends State<NotesPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(note.content),
+                    const SizedBox(height: 4),
                     if (note.category != null)
-                      Text('Category: ${note.category!.name}'),
+                      Text(
+                        'دسته: ${note.category!.name}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'آخرین ویرایش: ${note.updatedAt.toLocal().toString().substring(0, 16)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ],
                 ),
               );
