@@ -304,6 +304,248 @@ class _NotesPageState extends State<NotesPage> {
     contentController.dispose();
   }
 
+  Future<void> _updateNote(
+    int id,
+    String title,
+    String content,
+    int? categoryId,
+  ) async {
+    await _apiService.updateNote(
+      id: id,
+      title: title,
+      content: content,
+      categoryId: categoryId,
+    );
+
+    setState(() {
+      _notesFuture = _apiService.fetchNotes();
+    });
+  }
+
+  Future<void> _deleteNote(int id) async {
+    await _apiService.deleteNote(id);
+
+    setState(() {
+      _notesFuture = _apiService.fetchNotes();
+    });
+  }
+
+  Future<void> _showEditNoteDialog(Note note) async {
+    final titleController = TextEditingController(text: note.title);
+    final contentController = TextEditingController(text: note.content);
+
+    int? selectedCategoryId = note.category?.id;
+    String? errorMessage;
+    bool isSaving = false;
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            Future<void> saveEdit() async {
+              final title = titleController.text.trim();
+              final content = contentController.text.trim();
+
+              if (title.isEmpty) {
+                setDialogState(() {
+                  errorMessage = 'عنوان نمی‌تواند خالی باشد.';
+                });
+                return;
+              }
+
+              if (content.isEmpty) {
+                setDialogState(() {
+                  errorMessage = 'متن نمی‌تواند خالی باشد.';
+                });
+                return;
+              }
+
+              setDialogState(() {
+                isSaving = true;
+                errorMessage = null;
+              });
+
+              try {
+                await _updateNote(note.id, title, content, selectedCategoryId);
+
+                if (dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
+              } catch (error) {
+                final message = error.toString();
+
+                setDialogState(() {
+                  isSaving = false;
+                  errorMessage = message.startsWith('Exception: ')
+                      ? message.substring('Exception: '.length)
+                      : message;
+                });
+              }
+            }
+
+            return AlertDialog(
+              title: const Text('ویرایش یادداشت'),
+              content: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: titleController,
+                      enabled: !isSaving,
+                      decoration: const InputDecoration(
+                        labelText: 'عنوان',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: contentController,
+                      enabled: !isSaving,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: 'متن یادداشت',
+                        alignLabelWithHint: true,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FutureBuilder<List<Category>>(
+                      future: _categoriesFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text(
+                            'خطا در بارگذاری دسته‌بندی‌ها: ${snapshot.error}',
+                          );
+                        }
+
+                        final categories = snapshot.data ?? [];
+
+                        return DropdownButtonFormField<int?>(
+                          initialValue: selectedCategoryId,
+                          decoration: const InputDecoration(
+                            labelText: 'دسته‌بندی',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: [
+                            const DropdownMenuItem<int?>(
+                              value: null,
+                              child: Text('بدون دسته‌بندی'),
+                            ),
+                            ...categories.map((category) {
+                              return DropdownMenuItem<int?>(
+                                value: category.id,
+                                child: Text(category.name),
+                              );
+                            }),
+                          ],
+                          onChanged: isSaving
+                              ? null
+                              : (value) {
+                                  setDialogState(() {
+                                    selectedCategoryId = value;
+                                    errorMessage = null;
+                                  });
+                                },
+                        );
+                      },
+                    ),
+                    if (errorMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          errorMessage!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isSaving
+                      ? null
+                      : () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                  child: const Text('انصراف'),
+                ),
+                ElevatedButton(
+                  onPressed: isSaving ? null : saveEdit,
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('ذخیره تغییرات'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    titleController.dispose();
+    contentController.dispose();
+  }
+
+  Future<void> _confirmDeleteNote(Note note) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('حذف یادداشت'),
+          content: Text('آیا از حذف یادداشت "${note.title}" مطمئن هستید؟'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('انصراف'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('حذف'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      try {
+        await _deleteNote(note.id);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('یادداشت با موفقیت حذف شد.')),
+          );
+        }
+      } catch (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('خطا در حذف یادداشت: $error')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // دروازه ورود (Auth Gate): اگر کاربر لاگین نکرده، صفحه ورود/ثبت‌نام را نشان بده
@@ -466,6 +708,24 @@ class _NotesPageState extends State<NotesPage> {
                         fontSize: 12,
                         color: Colors.grey[600],
                       ),
+                    ),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      tooltip: 'ویرایش یادداشت',
+                      onPressed: () => _showEditNoteDialog(note),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      tooltip: 'حذف یادداشت',
+                      onPressed: () => _confirmDeleteNote(note),
                     ),
                   ],
                 ),

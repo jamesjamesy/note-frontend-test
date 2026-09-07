@@ -147,5 +147,61 @@ class ApiService {
       throw Exception('خطا در ذخیره یادداشت: ${response.statusCode}');
     }
   }
+
+  // ویرایش یادداشت موجود با متد PATCH
+  Future<void> updateNote({
+    required int id,
+    required String title,
+    required String content,
+    int? categoryId,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/api/notes/$id/'),
+      headers: _headers,
+      body: jsonEncode({
+        'title': title,
+        'content': content,
+        'category': categoryId,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      final decoded = jsonDecode(response.body);
+
+      if (decoded is Map<String, dynamic>) {
+        final messages = <String>[];
+
+        for (final entry in decoded.entries) {
+          final value = entry.value;
+
+          if (value is List) {
+            for (final message in value) {
+              messages.add(message.toString());
+            }
+          } else {
+            messages.add(value.toString());
+          }
+        }
+
+        if (messages.isNotEmpty) {
+          throw Exception(messages.join('\n'));
+        }
+      }
+
+      throw Exception('خطا در ویرایش یادداشت: ${response.statusCode}');
+    }
+  }
+
+  // حذف یادداشت با متد DELETE
+  Future<void> deleteNote(int id) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/notes/$id/'),
+      headers: _headers,
+    );
+
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception('خطا در حذف یادداشت: ${response.statusCode}');
+    }
+  }
 }
 
