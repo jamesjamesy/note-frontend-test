@@ -35,8 +35,12 @@ class ApiService {
       throw Exception('نام کاربری یا رمز عبور اشتباه است.');
     }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    token = data['token'] as String;
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    if (decoded.containsKey('data') && decoded['data'] is Map<String, dynamic>) {
+      token = (decoded['data'] as Map<String, dynamic>)['token'] as String;
+    } else {
+      token = decoded['token'] as String;
+    }
     return token!;
   }
 
@@ -51,16 +55,28 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 201 && response.statusCode != 200) {
       final decoded = jsonDecode(response.body);
-      if (decoded is Map<String, dynamic> && decoded.containsKey('username')) {
-        throw Exception('این نام کاربری قبلاً انتخاب شده است.');
+      if (decoded is Map<String, dynamic>) {
+        if (decoded.containsKey('meta') && decoded['meta'] is Map) {
+          final meta = decoded['meta'] as Map;
+          if (meta['message'] != null) {
+            throw Exception(meta['message'].toString());
+          }
+        }
+        if (decoded.containsKey('username')) {
+          throw Exception('این نام کاربری قبلاً انتخاب شده است.');
+        }
       }
       throw Exception('خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.');
     }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    token = data['token'] as String;
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    if (decoded.containsKey('data') && decoded['data'] is Map<String, dynamic>) {
+      token = (decoded['data'] as Map<String, dynamic>)['token'] as String;
+    } else {
+      token = decoded['token'] as String;
+    }
     return token!;
   }
 
@@ -80,7 +96,15 @@ class ApiService {
       throw Exception('خطا در بارگذاری یادداشت‌ها: ${response.statusCode}');
     }
 
-    final List<dynamic> jsonList = jsonDecode(response.body);
+    final decoded = jsonDecode(response.body);
+    List<dynamic> jsonList = [];
+    if (decoded is Map<String, dynamic> &&
+        decoded['data'] is Map &&
+        decoded['data']['items'] is List) {
+      jsonList = decoded['data']['items'] as List<dynamic>;
+    } else if (decoded is List<dynamic>) {
+      jsonList = decoded;
+    }
 
     return jsonList
         .map((json) => Note.fromJson(json as Map<String, dynamic>))
@@ -98,7 +122,17 @@ class ApiService {
       throw Exception('خطا در بارگذاری دسته‌بندی‌ها: ${response.statusCode}');
     }
 
-    final List<dynamic> jsonList = jsonDecode(response.body);
+    final decoded = jsonDecode(response.body);
+    List<dynamic> jsonList = [];
+    if (decoded is Map<String, dynamic> &&
+        decoded['data'] is Map &&
+        decoded['data']['items'] is List) {
+      jsonList = decoded['data']['items'] as List<dynamic>;
+    } else if (decoded is Map<String, dynamic> && decoded['data'] is List) {
+      jsonList = decoded['data'] as List<dynamic>;
+    } else if (decoded is List<dynamic>) {
+      jsonList = decoded;
+    }
 
     return jsonList
         .map((json) => Category.fromJson(json as Map<String, dynamic>))
@@ -121,30 +155,8 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode != 201) {
-      final decoded = jsonDecode(response.body);
-
-      if (decoded is Map<String, dynamic>) {
-        final messages = <String>[];
-
-        for (final entry in decoded.entries) {
-          final value = entry.value;
-
-          if (value is List) {
-            for (final message in value) {
-              messages.add(message.toString());
-            }
-          } else {
-            messages.add(value.toString());
-          }
-        }
-
-        if (messages.isNotEmpty) {
-          throw Exception(messages.join('\n'));
-        }
-      }
-
-      throw Exception('خطا در ذخیره یادداشت: ${response.statusCode}');
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      _handleError(response.body, 'خطا در ذخیره یادداشت');
     }
   }
 
@@ -166,30 +178,43 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      final decoded = jsonDecode(response.body);
+      _handleError(response.body, 'خطا در ویرایش یادداشت');
+    }
+  }
 
+  // متد کمکی برای تجزیه و نمایش خطاهای ساختاریافته
+  void _handleError(String body, String defaultPrefix) {
+    try {
+      final decoded = jsonDecode(body);
       if (decoded is Map<String, dynamic>) {
-        final messages = <String>[];
-
-        for (final entry in decoded.entries) {
-          final value = entry.value;
-
-          if (value is List) {
-            for (final message in value) {
-              messages.add(message.toString());
+        if (decoded.containsKey('meta') && decoded['meta'] is Map) {
+          final meta = decoded['meta'] as Map;
+          final errors = meta['errors'];
+          if (errors is Map && errors.isNotEmpty) {
+            final messages = <String>[];
+            for (final entry in errors.entries) {
+              final value = entry.value;
+              if (value is List) {
+                for (final message in value) {
+                  messages.add(message.toString());
+                }
+              } else {
+                messages.add(value.toString());
+              }
             }
-          } else {
-            messages.add(value.toString());
+            if (messages.isNotEmpty) {
+              throw Exception(messages.join('\n'));
+            }
+          }
+          if (meta['message'] != null) {
+            throw Exception(meta['message'].toString());
           }
         }
-
-        if (messages.isNotEmpty) {
-          throw Exception(messages.join('\n'));
-        }
       }
-
-      throw Exception('خطا در ویرایش یادداشت: ${response.statusCode}');
+    } catch (e) {
+      if (e is Exception) rethrow;
     }
+    throw Exception(defaultPrefix);
   }
 
   // حذف یادداشت با متد DELETE
