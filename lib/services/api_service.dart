@@ -1,23 +1,57 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:openapi/api.dart' as openapi;
 
 import '../models/category.dart';
 import '../models/note.dart';
 
+class PaginatedResult<T> {
+  final List<T> items;
+  final int currentPage;
+  final int perPage;
+  final int total;
+  final int lastPage;
+  final String? next;
+  final String? previous;
+
+  PaginatedResult({
+    required this.items,
+    this.currentPage = 1,
+    this.perPage = 10,
+    this.total = 0,
+    this.lastPage = 1,
+    this.next,
+    this.previous,
+  });
+
+  bool get hasNext => currentPage < lastPage;
+  bool get hasPrevious => currentPage > 1;
+}
+
 class ApiService {
   static const String baseUrl = 'http://127.0.0.1:8000';
 
-  // ذخیره توکن کاربر فعلی در حافظه سرویس
-  String? token;
+  late final openapi.ApiClient _apiClient;
+  late final openapi.NotesApi _notesApi;
+  late final openapi.CategoriesApi _categoriesApi;
 
-  // ساخت خودکار هدرهای درخواست (در صورت وجود توکن، آن را به عنوان Authorization ارسال می‌کند)
-  Map<String, String> get _headers {
-    final headers = {'Content-Type': 'application/json'};
-    if (token != null) {
-      headers['Authorization'] = 'Token $token';
+  ApiService() {
+    _apiClient = openapi.ApiClient(basePath: baseUrl);
+    _notesApi = openapi.NotesApi(_apiClient);
+    _categoriesApi = openapi.CategoriesApi(_apiClient);
+  }
+
+  // ذخیره توکن کاربر فعلی در حافظه سرویس و تزریق خودکار به کلاینت OpenAPI
+  String? _token;
+  String? get token => _token;
+  set token(String? val) {
+    _token = val;
+    if (val != null) {
+      _apiClient.addDefaultHeader('Authorization', 'Token $val');
+    } else {
+      _apiClient.defaultHeaderMap.remove('Authorization');
     }
-    return headers;
   }
 
   // متد ورود کاربر: نام کاربری و رمز را می‌فرستد و توکن دریافتی را ذخیره می‌کند
@@ -85,148 +119,82 @@ class ApiService {
     token = null;
   }
 
-  // واکشی یادداشت‌ها با ارسال توکن در هدر
-  Future<List<Note>> fetchNotes() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/notes/'),
-      headers: _headers,
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('خطا در بارگذاری یادداشت‌ها: ${response.statusCode}');
+  // واکشی یادداشت‌ها به صورت صفحه‌بندی شده توسط کلاینت رسمی OpenAPI
+  Future<PaginatedResult<Note>> fetchNotes({int page = 1}) async {
+    final response = await _notesApi.notesList(page: page);
+    if (response == null) {
+      return PaginatedResult<Note>(items: []);
     }
 
-    final decoded = jsonDecode(response.body);
-    List<dynamic> jsonList = [];
-    if (decoded is Map<String, dynamic> &&
-        decoded['data'] is Map &&
-        decoded['data']['items'] is List) {
-      jsonList = decoded['data']['items'] as List<dynamic>;
-    } else if (decoded is List<dynamic>) {
-      jsonList = decoded;
-    }
-
-    return jsonList
-        .map((json) => Note.fromJson(json as Map<String, dynamic>))
+    final notes = response.results
+        .map(
+          (n) => Note(
+            id: n.id,
+            title: n.title,
+            content: n.content,
+            createdAt: n.createdAt,
+            updatedAt: n.updatedAt,
+            category: n.category != null
+                ? Category(id: n.category!.id, name: n.category!.name)
+                : null,
+          ),
+        )
         .toList();
+
+    final lastPage = (response.count / 10).ceil();
+
+    return PaginatedResult<Note>(
+      items: notes,
+      currentPage: page,
+      perPage: 10,
+      total: response.count,
+      lastPage: lastPage > 0 ? lastPage : 1,
+      next: response.next,
+      previous: response.previous,
+    );
   }
 
-  // واکشی دسته‌بندی‌ها
+  // واکشی دسته‌بندی‌ها توسط کلاینت رسمی OpenAPI
   Future<List<Category>> fetchCategories() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/categories/'),
-      headers: _headers,
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('خطا در بارگذاری دسته‌بندی‌ها: ${response.statusCode}');
-    }
-
-    final decoded = jsonDecode(response.body);
-    List<dynamic> jsonList = [];
-    if (decoded is Map<String, dynamic> &&
-        decoded['data'] is Map &&
-        decoded['data']['items'] is List) {
-      jsonList = decoded['data']['items'] as List<dynamic>;
-    } else if (decoded is Map<String, dynamic> && decoded['data'] is List) {
-      jsonList = decoded['data'] as List<dynamic>;
-    } else if (decoded is List<dynamic>) {
-      jsonList = decoded;
-    }
-
-    return jsonList
-        .map((json) => Category.fromJson(json as Map<String, dynamic>))
+    final response = await _categoriesApi.categoriesList();
+    if (response == null) return [];
+    return response.results
+        .map((c) => Category(id: c.id, name: c.name))
         .toList();
   }
 
-  // ایجاد یادداشت جدید همراه با ارسال توکن
+  // ایجاد یادداشت جدید توسط کلاینت رسمی OpenAPI
   Future<void> createNote({
     required String title,
     required String content,
     int? categoryId,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/notes/'),
-      headers: _headers,
-      body: jsonEncode({
-        'title': title,
-        'content': content,
-        'category': categoryId,
-      }),
+    final noteWrite = openapi.NoteWrite(
+      title: title,
+      content: content,
+      category: categoryId,
     );
-
-    if (response.statusCode != 201 && response.statusCode != 200) {
-      _handleError(response.body, 'خطا در ذخیره یادداشت');
-    }
+    await _notesApi.notesCreate(noteWrite);
   }
 
-  // ویرایش یادداشت موجود با متد PATCH
+  // ویرایش یادداشت موجود توسط کلاینت رسمی OpenAPI
   Future<void> updateNote({
     required int id,
     required String title,
     required String content,
     int? categoryId,
   }) async {
-    final response = await http.patch(
-      Uri.parse('$baseUrl/api/notes/$id/'),
-      headers: _headers,
-      body: jsonEncode({
-        'title': title,
-        'content': content,
-        'category': categoryId,
-      }),
+    final noteWrite = openapi.NoteWrite(
+      title: title,
+      content: content,
+      category: categoryId,
     );
-
-    if (response.statusCode != 200) {
-      _handleError(response.body, 'خطا در ویرایش یادداشت');
-    }
+    await _notesApi.notesUpdate(id, noteWrite);
   }
 
-  // متد کمکی برای تجزیه و نمایش خطاهای ساختاریافته
-  void _handleError(String body, String defaultPrefix) {
-    try {
-      final decoded = jsonDecode(body);
-      if (decoded is Map<String, dynamic>) {
-        if (decoded.containsKey('meta') && decoded['meta'] is Map) {
-          final meta = decoded['meta'] as Map;
-          final errors = meta['errors'];
-          if (errors is Map && errors.isNotEmpty) {
-            final messages = <String>[];
-            for (final entry in errors.entries) {
-              final value = entry.value;
-              if (value is List) {
-                for (final message in value) {
-                  messages.add(message.toString());
-                }
-              } else {
-                messages.add(value.toString());
-              }
-            }
-            if (messages.isNotEmpty) {
-              throw Exception(messages.join('\n'));
-            }
-          }
-          if (meta['message'] != null) {
-            throw Exception(meta['message'].toString());
-          }
-        }
-      }
-    } catch (e) {
-      if (e is Exception) rethrow;
-    }
-    throw Exception(defaultPrefix);
-  }
-
-  // حذف یادداشت با متد DELETE
+  // حذف یادداشت با متد DELETE توسط کلاینت رسمی OpenAPI
   Future<void> deleteNote(int id) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/api/notes/$id/'),
-      headers: _headers,
-    );
-
-    if (response.statusCode != 204 && response.statusCode != 200) {
-      throw Exception('خطا در حذف یادداشت: ${response.statusCode}');
-    }
+    await _notesApi.notesDestroy(id);
   }
 }
 

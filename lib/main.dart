@@ -48,14 +48,15 @@ class _NotesPageState extends State<NotesPage> {
   bool _isAuthLoading = false;
   String? _authError;
 
-  late Future<List<Note>> _notesFuture;
+  int _currentPage = 1;
+  late Future<PaginatedResult<Note>> _notesFuture;
   late Future<List<Category>> _categoriesFuture;
 
   @override
   void initState() {
     super.initState();
     // در شروع متغیرها آماده می‌شوند، اما واکشی نوت‌ها بعد از لاگین انجام خواهد شد
-    _notesFuture = _apiService.fetchNotes();
+    _notesFuture = _apiService.fetchNotes(page: _currentPage);
     _categoriesFuture = _apiService.fetchCategories();
   }
 
@@ -95,8 +96,9 @@ class _NotesPageState extends State<NotesPage> {
       // بعد از ورود موفق: نام کاربری ذخیره شده و لیست نوت‌های اختصاصی کاربر خوانده می‌شود
       setState(() {
         _currentUsername = username;
+        _currentPage = 1;
         _isAuthLoading = false;
-        _notesFuture = _apiService.fetchNotes();
+        _notesFuture = _apiService.fetchNotes(page: _currentPage);
         _categoriesFuture = _apiService.fetchCategories();
       });
     } catch (error) {
@@ -115,9 +117,18 @@ class _NotesPageState extends State<NotesPage> {
     _apiService.logout();
     setState(() {
       _currentUsername = null;
+      _currentPage = 1;
       _usernameController.clear();
       _passwordController.clear();
       _authError = null;
+    });
+  }
+
+  // انتقال به صفحه مشخص
+  void _goToPage(int page) {
+    setState(() {
+      _currentPage = page;
+      _notesFuture = _apiService.fetchNotes(page: _currentPage);
     });
   }
 
@@ -133,7 +144,7 @@ class _NotesPageState extends State<NotesPage> {
     );
 
     setState(() {
-      _notesFuture = _apiService.fetchNotes();
+      _notesFuture = _apiService.fetchNotes(page: _currentPage);
     });
   }
 
@@ -318,7 +329,7 @@ class _NotesPageState extends State<NotesPage> {
     );
 
     setState(() {
-      _notesFuture = _apiService.fetchNotes();
+      _notesFuture = _apiService.fetchNotes(page: _currentPage);
     });
   }
 
@@ -326,7 +337,7 @@ class _NotesPageState extends State<NotesPage> {
     await _apiService.deleteNote(id);
 
     setState(() {
-      _notesFuture = _apiService.fetchNotes();
+      _notesFuture = _apiService.fetchNotes(page: _currentPage);
     });
   }
 
@@ -640,6 +651,24 @@ class _NotesPageState extends State<NotesPage> {
                               : 'قبلاً ثبت‌نام کرده‌اید؟ وارد شوید',
                         ),
                       ),
+                      const Divider(height: 32),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.person_outline),
+                        label: const Text('ورود به عنوان مهمان (یادداشت‌های عمومی)'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 44),
+                        ),
+                        onPressed: _isAuthLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _currentUsername = 'مهمان';
+                                  _currentPage = 1;
+                                  _notesFuture = _apiService.fetchNotes(page: _currentPage);
+                                  _categoriesFuture = _apiService.fetchCategories();
+                                });
+                              },
+                      ),
                     ],
                   ),
                 ),
@@ -650,10 +679,14 @@ class _NotesPageState extends State<NotesPage> {
       );
     }
 
-    // اگر کاربر وارد شده باشد، صفحه اصلی یادداشت‌های خودش نمایش داده می‌شود
+    // اگر کاربر وارد شده باشد، صفحه اصلی یادداشت‌ها نمایش داده می‌شود
     return Scaffold(
       appBar: AppBar(
-        title: Text('یادداشت‌های $_currentUsername'),
+        title: Text(
+          _currentUsername == 'مهمان'
+              ? 'یادداشت‌های عمومی (حالت مهمان)'
+              : 'یادداشت‌های $_currentUsername',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -662,7 +695,7 @@ class _NotesPageState extends State<NotesPage> {
           ),
         ],
       ),
-      body: FutureBuilder<List<Note>>(
+      body: FutureBuilder<PaginatedResult<Note>>(
         future: _notesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -673,7 +706,8 @@ class _NotesPageState extends State<NotesPage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          final notes = snapshot.data ?? [];
+          final paginated = snapshot.data;
+          final notes = paginated?.items ?? [];
 
           if (notes.isEmpty) {
             return const Center(
@@ -684,53 +718,94 @@ class _NotesPageState extends State<NotesPage> {
             );
           }
 
-          return ListView.builder(
-            itemCount: notes.length,
-            itemBuilder: (context, index) {
-              final note = notes[index];
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: notes.length,
+                  itemBuilder: (context, index) {
+                    final note = notes[index];
 
-              return ListTile(
-                title: Text(note.title),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(note.content),
-                    const SizedBox(height: 4),
-                    if (note.category != null)
+                    return ListTile(
+                      title: Text(note.title),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(note.content),
+                          const SizedBox(height: 4),
+                          if (note.category != null)
+                            Text(
+                              'دسته: ${note.category!.name}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'آخرین ویرایش: ${note.updatedAt.toLocal().toString().substring(0, 16)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit_outlined),
+                            tooltip: 'ویرایش یادداشت',
+                            onPressed: () => _showEditNoteDialog(note),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            tooltip: 'حذف یادداشت',
+                            onPressed: () => _confirmDeleteNote(note),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (paginated != null && paginated.total > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                    border: Border(
+                      top: BorderSide(
+                        color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('صفحه قبل'),
+                        onPressed: paginated.hasPrevious
+                            ? () => _goToPage(_currentPage - 1)
+                            : null,
+                      ),
                       Text(
-                        'دسته: ${note.category!.name}',
+                        'صفحه $_currentPage از ${paginated.lastPage} (مجموع ${paginated.total} یادداشت)',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'آخرین ویرایش: ${note.updatedAt.toLocal().toString().substring(0, 16)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('صفحه بعد'),
+                        onPressed: paginated.hasNext
+                            ? () => _goToPage(_currentPage + 1)
+                            : null,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      tooltip: 'ویرایش یادداشت',
-                      onPressed: () => _showEditNoteDialog(note),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete_outline,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      tooltip: 'حذف یادداشت',
-                      onPressed: () => _confirmDeleteNote(note),
-                    ),
-                  ],
-                ),
-              );
-            },
+            ],
           );
         },
       ),
