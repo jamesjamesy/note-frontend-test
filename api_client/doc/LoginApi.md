@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **loginCreate**
-> AuthToken loginCreate(username, password, token)
+> LoginCreate200Response loginCreate(username, password, token)
 
 
 
@@ -48,7 +48,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**AuthToken**](AuthToken.md)
+[**LoginCreate200Response**](LoginCreate200Response.md)
 
 ### Authorization
 

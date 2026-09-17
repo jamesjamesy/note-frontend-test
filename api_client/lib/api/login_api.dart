@@ -66,7 +66,7 @@ class LoginApi {
   /// * [String] password (required):
   ///
   /// * [String] token (required):
-  Future<AuthToken?> loginCreate(String username, String password, String token, { Future<void>? abortTrigger, }) async {
+  Future<LoginCreate200Response?> loginCreate(String username, String password, String token, { Future<void>? abortTrigger, }) async {
     final response = await loginCreateWithHttpInfo(username, password, token, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -75,7 +75,7 @@ class LoginApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'AuthToken',) as AuthToken;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'LoginCreate200Response',) as LoginCreate200Response;
     
     }
     return null;

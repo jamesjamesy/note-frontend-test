@@ -34,13 +34,22 @@ part 'api/notes_api.dart';
 part 'api/register_api.dart';
 
 part 'model/auth_token.dart';
+part 'model/categories_list200_response.dart';
+part 'model/categories_retrieve200_response.dart';
 part 'model/category.dart';
+part 'model/login_create200_response.dart';
+part 'model/meta_response.dart';
 part 'model/note.dart';
 part 'model/note_write.dart';
+part 'model/notes_create201_response.dart';
+part 'model/notes_destroy200_response.dart';
+part 'model/notes_list200_response.dart';
+part 'model/notes_retrieve200_response.dart';
 part 'model/paginated_category_list.dart';
 part 'model/paginated_note_list.dart';
 part 'model/patched_note_write.dart';
 part 'model/register.dart';
+part 'model/register_create201_response.dart';
 
 
 /// An [ApiClient] instance that uses the default values obtained from

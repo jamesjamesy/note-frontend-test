@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **registerCreate**
-> Register registerCreate(register)
+> RegisterCreate201Response registerCreate(register)
 
 
 
@@ -44,7 +44,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**Register**](Register.md)
+[**RegisterCreate201Response**](RegisterCreate201Response.md)
 
 ### Authorization
 

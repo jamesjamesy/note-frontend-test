@@ -185,12 +185,28 @@ class ApiClient {
           return value is DateTime ? value : DateTime.tryParse(value);
         case 'AuthToken':
           return AuthToken.fromJson(value);
+        case 'CategoriesList200Response':
+          return CategoriesList200Response.fromJson(value);
+        case 'CategoriesRetrieve200Response':
+          return CategoriesRetrieve200Response.fromJson(value);
         case 'Category':
           return Category.fromJson(value);
+        case 'LoginCreate200Response':
+          return LoginCreate200Response.fromJson(value);
+        case 'MetaResponse':
+          return MetaResponse.fromJson(value);
         case 'Note':
           return Note.fromJson(value);
         case 'NoteWrite':
           return NoteWrite.fromJson(value);
+        case 'NotesCreate201Response':
+          return NotesCreate201Response.fromJson(value);
+        case 'NotesDestroy200Response':
+          return NotesDestroy200Response.fromJson(value);
+        case 'NotesList200Response':
+          return NotesList200Response.fromJson(value);
+        case 'NotesRetrieve200Response':
+          return NotesRetrieve200Response.fromJson(value);
         case 'PaginatedCategoryList':
           return PaginatedCategoryList.fromJson(value);
         case 'PaginatedNoteList':
@@ -199,6 +215,8 @@ class ApiClient {
           return PatchedNoteWrite.fromJson(value);
         case 'Register':
           return Register.fromJson(value);
+        case 'RegisterCreate201Response':
+          return RegisterCreate201Response.fromJson(value);
         default:
           dynamic match;
           if (value is List && (match = _regList.firstMatch(targetType)?.group(1)) != null) {

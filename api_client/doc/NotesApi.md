@@ -18,7 +18,7 @@ Method | HTTP request | Description
 
 
 # **notesCreate**
-> NoteWrite notesCreate(noteWrite)
+> NotesCreate201Response notesCreate(noteWrite)
 
 
 
@@ -49,7 +49,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**NoteWrite**](NoteWrite.md)
+[**NotesCreate201Response**](NotesCreate201Response.md)
 
 ### Authorization
 
@@ -63,7 +63,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **notesDestroy**
-> notesDestroy(id)
+> NotesDestroy200Response notesDestroy(id)
 
 
 
@@ -79,7 +79,8 @@ final api_instance = NotesApi();
 final id = 56; // int | A unique integer value identifying this note.
 
 try {
-    api_instance.notesDestroy(id);
+    final result = api_instance.notesDestroy(id);
+    print(result);
 } catch (e) {
     print('Exception when calling NotesApi->notesDestroy: $e\n');
 }
@@ -93,7 +94,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**NotesDestroy200Response**](NotesDestroy200Response.md)
 
 ### Authorization
 
@@ -102,12 +103,12 @@ void (empty response body)
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **notesList**
-> PaginatedNoteList notesList(page)
+> NotesList200Response notesList(page)
 
 
 
@@ -138,7 +139,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**PaginatedNoteList**](PaginatedNoteList.md)
+[**NotesList200Response**](NotesList200Response.md)
 
 ### Authorization
 
@@ -152,7 +153,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **notesPartialUpdate**
-> NoteWrite notesPartialUpdate(id, patchedNoteWrite)
+> NotesCreate201Response notesPartialUpdate(id, patchedNoteWrite)
 
 
 
@@ -185,7 +186,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**NoteWrite**](NoteWrite.md)
+[**NotesCreate201Response**](NotesCreate201Response.md)
 
 ### Authorization
 
@@ -199,7 +200,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **notesRetrieve**
-> Note notesRetrieve(id)
+> NotesRetrieve200Response notesRetrieve(id)
 
 
 
@@ -230,7 +231,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**Note**](Note.md)
+[**NotesRetrieve200Response**](NotesRetrieve200Response.md)
 
 ### Authorization
 
@@ -244,7 +245,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **notesUpdate**
-> NoteWrite notesUpdate(id, noteWrite)
+> NotesCreate201Response notesUpdate(id, noteWrite)
 
 
 
@@ -277,7 +278,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**NoteWrite**](NoteWrite.md)
+[**NotesCreate201Response**](NotesCreate201Response.md)
 
 ### Authorization
 

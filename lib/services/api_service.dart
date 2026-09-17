@@ -126,7 +126,7 @@ class ApiService {
       return PaginatedResult<Note>(items: []);
     }
 
-    final notes = response.results
+    final notes = response.data.results
         .map(
           (n) => Note(
             id: n.id,
@@ -141,16 +141,16 @@ class ApiService {
         )
         .toList();
 
-    final lastPage = (response.count / 10).ceil();
+    final lastPage = (response.data.count / 10).ceil();
 
     return PaginatedResult<Note>(
       items: notes,
       currentPage: page,
       perPage: 10,
-      total: response.count,
+      total: response.data.count,
       lastPage: lastPage > 0 ? lastPage : 1,
-      next: response.next,
-      previous: response.previous,
+      next: response.data.next,
+      previous: response.data.previous,
     );
   }
 
@@ -158,7 +158,7 @@ class ApiService {
   Future<List<Category>> fetchCategories() async {
     final response = await _categoriesApi.categoriesList();
     if (response == null) return [];
-    return response.results
+    return response.data.results
         .map((c) => Category(id: c.id, name: c.name))
         .toList();
   }

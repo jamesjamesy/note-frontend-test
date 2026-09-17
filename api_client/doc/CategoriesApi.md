@@ -14,7 +14,7 @@ Method | HTTP request | Description
 
 
 # **categoriesList**
-> PaginatedCategoryList categoriesList(page)
+> CategoriesList200Response categoriesList(page)
 
 
 
@@ -45,7 +45,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**PaginatedCategoryList**](PaginatedCategoryList.md)
+[**CategoriesList200Response**](CategoriesList200Response.md)
 
 ### Authorization
 
@@ -59,7 +59,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **categoriesRetrieve**
-> Category categoriesRetrieve(id)
+> CategoriesRetrieve200Response categoriesRetrieve(id)
 
 
 
@@ -90,7 +90,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**Category**](Category.md)
+[**CategoriesRetrieve200Response**](CategoriesRetrieve200Response.md)
 
 ### Authorization
 

@@ -78,13 +78,22 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [AuthToken](doc//AuthToken.md)
+ - [CategoriesList200Response](doc//CategoriesList200Response.md)
+ - [CategoriesRetrieve200Response](doc//CategoriesRetrieve200Response.md)
  - [Category](doc//Category.md)
+ - [LoginCreate200Response](doc//LoginCreate200Response.md)
+ - [MetaResponse](doc//MetaResponse.md)
  - [Note](doc//Note.md)
  - [NoteWrite](doc//NoteWrite.md)
+ - [NotesCreate201Response](doc//NotesCreate201Response.md)
+ - [NotesDestroy200Response](doc//NotesDestroy200Response.md)
+ - [NotesList200Response](doc//NotesList200Response.md)
+ - [NotesRetrieve200Response](doc//NotesRetrieve200Response.md)
  - [PaginatedCategoryList](doc//PaginatedCategoryList.md)
  - [PaginatedNoteList](doc//PaginatedNoteList.md)
  - [PatchedNoteWrite](doc//PatchedNoteWrite.md)
  - [Register](doc//Register.md)
+ - [RegisterCreate201Response](doc//RegisterCreate201Response.md)
 
 
 ## Documentation For Authorization

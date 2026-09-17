@@ -55,7 +55,7 @@ class CategoriesApi {
   ///
   /// * [int] page:
   ///   A page number within the paginated result set.
-  Future<PaginatedCategoryList?> categoriesList({ int? page, Future<void>? abortTrigger, }) async {
+  Future<CategoriesList200Response?> categoriesList({ int? page, Future<void>? abortTrigger, }) async {
     final response = await categoriesListWithHttpInfo(page: page, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -64,7 +64,7 @@ class CategoriesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'PaginatedCategoryList',) as PaginatedCategoryList;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'CategoriesList200Response',) as CategoriesList200Response;
     
     }
     return null;
@@ -106,7 +106,7 @@ class CategoriesApi {
   ///
   /// * [int] id (required):
   ///   A unique integer value identifying this category.
-  Future<Category?> categoriesRetrieve(int id, { Future<void>? abortTrigger, }) async {
+  Future<CategoriesRetrieve200Response?> categoriesRetrieve(int id, { Future<void>? abortTrigger, }) async {
     final response = await categoriesRetrieveWithHttpInfo(id, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -115,7 +115,7 @@ class CategoriesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'Category',) as Category;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'CategoriesRetrieve200Response',) as CategoriesRetrieve200Response;
     
     }
     return null;

@@ -49,7 +49,7 @@ class NotesApi {
   /// Parameters:
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<NoteWrite?> notesCreate(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+  Future<NotesCreate201Response?> notesCreate(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
     final response = await notesCreateWithHttpInfo(noteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -58,7 +58,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NoteWrite',) as NoteWrite;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
     
     }
     return null;
@@ -100,11 +100,19 @@ class NotesApi {
   ///
   /// * [int] id (required):
   ///   A unique integer value identifying this note.
-  Future<void> notesDestroy(int id, { Future<void>? abortTrigger, }) async {
+  Future<NotesDestroy200Response?> notesDestroy(int id, { Future<void>? abortTrigger, }) async {
     final response = await notesDestroyWithHttpInfo(id, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
+    // When a remote server returns no body with a status of 204, we shall not decode it.
+    // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
+    // FormatException when trying to decode an empty string.
+    if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesDestroy200Response',) as NotesDestroy200Response;
+    
+    }
+    return null;
   }
 
   /// Performs an HTTP 'GET /api/notes/' operation and returns the [Response].
@@ -146,7 +154,7 @@ class NotesApi {
   ///
   /// * [int] page:
   ///   A page number within the paginated result set.
-  Future<PaginatedNoteList?> notesList({ int? page, Future<void>? abortTrigger, }) async {
+  Future<NotesList200Response?> notesList({ int? page, Future<void>? abortTrigger, }) async {
     final response = await notesListWithHttpInfo(page: page, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -155,7 +163,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'PaginatedNoteList',) as PaginatedNoteList;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesList200Response',) as NotesList200Response;
     
     }
     return null;
@@ -201,7 +209,7 @@ class NotesApi {
   ///   A unique integer value identifying this note.
   ///
   /// * [PatchedNoteWrite] patchedNoteWrite:
-  Future<NoteWrite?> notesPartialUpdate(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
+  Future<NotesCreate201Response?> notesPartialUpdate(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
     final response = await notesPartialUpdateWithHttpInfo(id, patchedNoteWrite: patchedNoteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -210,7 +218,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NoteWrite',) as NoteWrite;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
     
     }
     return null;
@@ -252,7 +260,7 @@ class NotesApi {
   ///
   /// * [int] id (required):
   ///   A unique integer value identifying this note.
-  Future<Note?> notesRetrieve(int id, { Future<void>? abortTrigger, }) async {
+  Future<NotesRetrieve200Response?> notesRetrieve(int id, { Future<void>? abortTrigger, }) async {
     final response = await notesRetrieveWithHttpInfo(id, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -261,7 +269,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'Note',) as Note;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesRetrieve200Response',) as NotesRetrieve200Response;
     
     }
     return null;
@@ -307,7 +315,7 @@ class NotesApi {
   ///   A unique integer value identifying this note.
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<NoteWrite?> notesUpdate(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+  Future<NotesCreate201Response?> notesUpdate(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
     final response = await notesUpdateWithHttpInfo(id, noteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -316,7 +324,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NoteWrite',) as NoteWrite;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
     
     }
     return null;
