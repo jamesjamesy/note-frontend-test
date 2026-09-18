@@ -46,13 +46,12 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
 
 final api_instance = CategoriesApi();
-final page = 56; // int | A page number within the paginated result set.
 
 try {
-    final result = api_instance.categoriesList(page);
+    final result = api_instance.categoriesListList();
     print(result);
 } catch (e) {
-    print('Exception when calling CategoriesApi->categoriesList: $e\n');
+    print('Exception when calling CategoriesApi->categoriesListList: $e\n');
 }
 
 ```
@@ -63,33 +62,28 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*CategoriesApi* | [**categoriesList**](doc//CategoriesApi.md#categorieslist) | **GET** /api/categories/ | 
-*CategoriesApi* | [**categoriesRetrieve**](doc//CategoriesApi.md#categoriesretrieve) | **GET** /api/categories/{id}/ | 
+*CategoriesApi* | [**categoriesListList**](doc//CategoriesApi.md#categorieslistlist) | **GET** /api/categories/list | لیست دسته‌بندی‌ها
 *LoginApi* | [**loginCreate**](doc//LoginApi.md#logincreate) | **POST** /api/login/ | 
-*NotesApi* | [**notesCreate**](doc//NotesApi.md#notescreate) | **POST** /api/notes/ | 
-*NotesApi* | [**notesDestroy**](doc//NotesApi.md#notesdestroy) | **DELETE** /api/notes/{id}/ | 
-*NotesApi* | [**notesList**](doc//NotesApi.md#noteslist) | **GET** /api/notes/ | 
-*NotesApi* | [**notesPartialUpdate**](doc//NotesApi.md#notespartialupdate) | **PATCH** /api/notes/{id}/ | 
-*NotesApi* | [**notesRetrieve**](doc//NotesApi.md#notesretrieve) | **GET** /api/notes/{id}/ | 
-*NotesApi* | [**notesUpdate**](doc//NotesApi.md#notesupdate) | **PUT** /api/notes/{id}/ | 
+*NotesApi* | [**notesCreateCreate**](doc//NotesApi.md#notescreatecreate) | **POST** /api/notes/create | ایجاد یادداشت جدید
+*NotesApi* | [**notesDeleteDestroy**](doc//NotesApi.md#notesdeletedestroy) | **DELETE** /api/notes/delete/{id} | حذف یادداشت
+*NotesApi* | [**notesDetailRetrieve**](doc//NotesApi.md#notesdetailretrieve) | **GET** /api/notes/detail/{id} | جزئیات یادداشت
+*NotesApi* | [**notesListList**](doc//NotesApi.md#noteslistlist) | **GET** /api/notes/list | لیست یادداشت‌ها
+*NotesApi* | [**notesUpdatePartialUpdate**](doc//NotesApi.md#notesupdatepartialupdate) | **PATCH** /api/notes/update/{id} | ویرایش جزئی یادداشت
+*NotesApi* | [**notesUpdateUpdate**](doc//NotesApi.md#notesupdateupdate) | **PUT** /api/notes/update/{id} | ویرایش یادداشت
 *RegisterApi* | [**registerCreate**](doc//RegisterApi.md#registercreate) | **POST** /api/register/ | 
 
 
 ## Documentation For Models
 
  - [AuthToken](doc//AuthToken.md)
- - [CategoriesList200Response](doc//CategoriesList200Response.md)
- - [CategoriesRetrieve200Response](doc//CategoriesRetrieve200Response.md)
+ - [CategoriesListList200Response](doc//CategoriesListList200Response.md)
  - [Category](doc//Category.md)
  - [LoginCreate200Response](doc//LoginCreate200Response.md)
  - [MetaResponse](doc//MetaResponse.md)
  - [Note](doc//Note.md)
  - [NoteWrite](doc//NoteWrite.md)
- - [NotesCreate201Response](doc//NotesCreate201Response.md)
- - [NotesDestroy200Response](doc//NotesDestroy200Response.md)
- - [NotesList200Response](doc//NotesList200Response.md)
- - [NotesRetrieve200Response](doc//NotesRetrieve200Response.md)
- - [PaginatedCategoryList](doc//PaginatedCategoryList.md)
+ - [NotesCreateCreate201Response](doc//NotesCreateCreate201Response.md)
+ - [NotesListList200Response](doc//NotesListList200Response.md)
  - [PaginatedNoteList](doc//PaginatedNoteList.md)
  - [PatchedNoteWrite](doc//PatchedNoteWrite.md)
  - [Register](doc//Register.md)

@@ -16,13 +16,18 @@ class NotesApi {
 
   final ApiClient apiClient;
 
-  /// Performs an HTTP 'POST /api/notes/' operation and returns the [Response].
+  /// ایجاد یادداشت جدید
+  ///
+  /// یک یادداشت جدید می‌سازد و در صورت احراز هویت، آن را به کاربر متصل می‌کند.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<Response> notesCreateWithHttpInfo(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+  Future<Response> notesCreateCreateWithHttpInfo(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/notes/';
+    final path = r'/api/notes/create';
 
     // ignore: prefer_final_locals
     Object? postBody = noteWrite;
@@ -46,11 +51,15 @@ class NotesApi {
     );
   }
 
+  /// ایجاد یادداشت جدید
+  ///
+  /// یک یادداشت جدید می‌سازد و در صورت احراز هویت، آن را به کاربر متصل می‌کند.
+  ///
   /// Parameters:
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<NotesCreate201Response?> notesCreate(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
-    final response = await notesCreateWithHttpInfo(noteWrite, abortTrigger: abortTrigger,);
+  Future<NotesCreateCreate201Response?> notesCreateCreate(NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+    final response = await notesCreateCreateWithHttpInfo(noteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -58,20 +67,24 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreateCreate201Response',) as NotesCreateCreate201Response;
     
     }
     return null;
   }
 
-  /// Performs an HTTP 'DELETE /api/notes/{id}/' operation and returns the [Response].
+  /// حذف یادداشت
+  ///
+  /// حذف یادداشت بر اساس شناسه.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
-  Future<Response> notesDestroyWithHttpInfo(int id, { Future<void>? abortTrigger, }) async {
+  Future<Response> notesDeleteDestroyWithHttpInfo(int id, { Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/notes/{id}/'
+    final path = r'/api/notes/delete/{id}'
       .replaceAll('{id}', id.toString());
 
     // ignore: prefer_final_locals
@@ -96,12 +109,65 @@ class NotesApi {
     );
   }
 
+  /// حذف یادداشت
+  ///
+  /// حذف یادداشت بر اساس شناسه.
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
-  Future<NotesDestroy200Response?> notesDestroy(int id, { Future<void>? abortTrigger, }) async {
-    final response = await notesDestroyWithHttpInfo(id, abortTrigger: abortTrigger,);
+  Future<void> notesDeleteDestroy(int id, { Future<void>? abortTrigger, }) async {
+    final response = await notesDeleteDestroyWithHttpInfo(id, abortTrigger: abortTrigger,);
+    if (response.statusCode >= HttpStatus.badRequest) {
+      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
+    }
+  }
+
+  /// جزئیات یادداشت
+  ///
+  /// دریافت اطلاعات کامل یک یادداشت بر اساس شناسه.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
+  /// Parameters:
+  ///
+  /// * [int] id (required):
+  Future<Response> notesDetailRetrieveWithHttpInfo(int id, { Future<void>? abortTrigger, }) async {
+    // ignore: prefer_const_declarations
+    final path = r'/api/notes/detail/{id}'
+      .replaceAll('{id}', id.toString());
+
+    // ignore: prefer_final_locals
+    Object? postBody;
+
+    final queryParams = <QueryParam>[];
+    final headerParams = <String, String>{};
+    final formParams = <String, String>{};
+
+    const contentTypes = <String>[];
+
+
+    return apiClient.invokeAPI(
+      path,
+      'GET',
+      queryParams,
+      postBody,
+      headerParams,
+      formParams,
+      contentTypes.isEmpty ? null : contentTypes.first,
+      abortTrigger: abortTrigger,
+    );
+  }
+
+  /// جزئیات یادداشت
+  ///
+  /// دریافت اطلاعات کامل یک یادداشت بر اساس شناسه.
+  ///
+  /// Parameters:
+  ///
+  /// * [int] id (required):
+  Future<NotesCreateCreate201Response?> notesDetailRetrieve(int id, { Future<void>? abortTrigger, }) async {
+    final response = await notesDetailRetrieveWithHttpInfo(id, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -109,20 +175,25 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesDestroy200Response',) as NotesDestroy200Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreateCreate201Response',) as NotesCreateCreate201Response;
     
     }
     return null;
   }
 
-  /// Performs an HTTP 'GET /api/notes/' operation and returns the [Response].
+  /// لیست یادداشت‌ها
+  ///
+  /// دریافت لیست یادداشت‌های کاربر یا یادداشت‌های عمومی به صورت صفحه‌بندی‌شده.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [int] page:
   ///   A page number within the paginated result set.
-  Future<Response> notesListWithHttpInfo({ int? page, Future<void>? abortTrigger, }) async {
+  Future<Response> notesListListWithHttpInfo({ int? page, Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/notes/';
+    final path = r'/api/notes/list';
 
     // ignore: prefer_final_locals
     Object? postBody;
@@ -150,12 +221,16 @@ class NotesApi {
     );
   }
 
+  /// لیست یادداشت‌ها
+  ///
+  /// دریافت لیست یادداشت‌های کاربر یا یادداشت‌های عمومی به صورت صفحه‌بندی‌شده.
+  ///
   /// Parameters:
   ///
   /// * [int] page:
   ///   A page number within the paginated result set.
-  Future<NotesList200Response?> notesList({ int? page, Future<void>? abortTrigger, }) async {
-    final response = await notesListWithHttpInfo(page: page, abortTrigger: abortTrigger,);
+  Future<NotesListList200Response?> notesListList({ int? page, Future<void>? abortTrigger, }) async {
+    final response = await notesListListWithHttpInfo(page: page, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -163,22 +238,26 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesList200Response',) as NotesList200Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesListList200Response',) as NotesListList200Response;
     
     }
     return null;
   }
 
-  /// Performs an HTTP 'PATCH /api/notes/{id}/' operation and returns the [Response].
+  /// ویرایش جزئی یادداشت
+  ///
+  /// ویرایش بخشی از اطلاعات یادداشت.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
   ///
   /// * [PatchedNoteWrite] patchedNoteWrite:
-  Future<Response> notesPartialUpdateWithHttpInfo(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
+  Future<Response> notesUpdatePartialUpdateWithHttpInfo(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/notes/{id}/'
+    final path = r'/api/notes/update/{id}'
       .replaceAll('{id}', id.toString());
 
     // ignore: prefer_final_locals
@@ -203,14 +282,17 @@ class NotesApi {
     );
   }
 
+  /// ویرایش جزئی یادداشت
+  ///
+  /// ویرایش بخشی از اطلاعات یادداشت.
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
   ///
   /// * [PatchedNoteWrite] patchedNoteWrite:
-  Future<NotesCreate201Response?> notesPartialUpdate(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
-    final response = await notesPartialUpdateWithHttpInfo(id, patchedNoteWrite: patchedNoteWrite, abortTrigger: abortTrigger,);
+  Future<NotesCreateCreate201Response?> notesUpdatePartialUpdate(int id, { PatchedNoteWrite? patchedNoteWrite, Future<void>? abortTrigger, }) async {
+    final response = await notesUpdatePartialUpdateWithHttpInfo(id, patchedNoteWrite: patchedNoteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -218,73 +300,26 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreateCreate201Response',) as NotesCreateCreate201Response;
     
     }
     return null;
   }
 
-  /// Performs an HTTP 'GET /api/notes/{id}/' operation and returns the [Response].
+  /// ویرایش یادداشت
+  ///
+  /// ویرایش کامل عنوان، محتوا یا دسته‌بندی یادداشت.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
-  Future<Response> notesRetrieveWithHttpInfo(int id, { Future<void>? abortTrigger, }) async {
-    // ignore: prefer_const_declarations
-    final path = r'/api/notes/{id}/'
-      .replaceAll('{id}', id.toString());
-
-    // ignore: prefer_final_locals
-    Object? postBody;
-
-    final queryParams = <QueryParam>[];
-    final headerParams = <String, String>{};
-    final formParams = <String, String>{};
-
-    const contentTypes = <String>[];
-
-
-    return apiClient.invokeAPI(
-      path,
-      'GET',
-      queryParams,
-      postBody,
-      headerParams,
-      formParams,
-      contentTypes.isEmpty ? null : contentTypes.first,
-      abortTrigger: abortTrigger,
-    );
-  }
-
-  /// Parameters:
-  ///
-  /// * [int] id (required):
-  ///   A unique integer value identifying this note.
-  Future<NotesRetrieve200Response?> notesRetrieve(int id, { Future<void>? abortTrigger, }) async {
-    final response = await notesRetrieveWithHttpInfo(id, abortTrigger: abortTrigger,);
-    if (response.statusCode >= HttpStatus.badRequest) {
-      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
-    }
-    // When a remote server returns no body with a status of 204, we shall not decode it.
-    // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
-    // FormatException when trying to decode an empty string.
-    if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesRetrieve200Response',) as NotesRetrieve200Response;
-    
-    }
-    return null;
-  }
-
-  /// Performs an HTTP 'PUT /api/notes/{id}/' operation and returns the [Response].
-  /// Parameters:
-  ///
-  /// * [int] id (required):
-  ///   A unique integer value identifying this note.
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<Response> notesUpdateWithHttpInfo(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+  Future<Response> notesUpdateUpdateWithHttpInfo(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/notes/{id}/'
+    final path = r'/api/notes/update/{id}'
       .replaceAll('{id}', id.toString());
 
     // ignore: prefer_final_locals
@@ -309,14 +344,17 @@ class NotesApi {
     );
   }
 
+  /// ویرایش یادداشت
+  ///
+  /// ویرایش کامل عنوان، محتوا یا دسته‌بندی یادداشت.
+  ///
   /// Parameters:
   ///
   /// * [int] id (required):
-  ///   A unique integer value identifying this note.
   ///
   /// * [NoteWrite] noteWrite (required):
-  Future<NotesCreate201Response?> notesUpdate(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
-    final response = await notesUpdateWithHttpInfo(id, noteWrite, abortTrigger: abortTrigger,);
+  Future<NotesCreateCreate201Response?> notesUpdateUpdate(int id, NoteWrite noteWrite, { Future<void>? abortTrigger, }) async {
+    final response = await notesUpdateUpdateWithHttpInfo(id, noteWrite, abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -324,7 +362,7 @@ class NotesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreate201Response',) as NotesCreate201Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'NotesCreateCreate201Response',) as NotesCreateCreate201Response;
     
     }
     return null;

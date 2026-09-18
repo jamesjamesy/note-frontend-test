@@ -185,10 +185,8 @@ class ApiClient {
           return value is DateTime ? value : DateTime.tryParse(value);
         case 'AuthToken':
           return AuthToken.fromJson(value);
-        case 'CategoriesList200Response':
-          return CategoriesList200Response.fromJson(value);
-        case 'CategoriesRetrieve200Response':
-          return CategoriesRetrieve200Response.fromJson(value);
+        case 'CategoriesListList200Response':
+          return CategoriesListList200Response.fromJson(value);
         case 'Category':
           return Category.fromJson(value);
         case 'LoginCreate200Response':
@@ -199,16 +197,10 @@ class ApiClient {
           return Note.fromJson(value);
         case 'NoteWrite':
           return NoteWrite.fromJson(value);
-        case 'NotesCreate201Response':
-          return NotesCreate201Response.fromJson(value);
-        case 'NotesDestroy200Response':
-          return NotesDestroy200Response.fromJson(value);
-        case 'NotesList200Response':
-          return NotesList200Response.fromJson(value);
-        case 'NotesRetrieve200Response':
-          return NotesRetrieve200Response.fromJson(value);
-        case 'PaginatedCategoryList':
-          return PaginatedCategoryList.fromJson(value);
+        case 'NotesCreateCreate201Response':
+          return NotesCreateCreate201Response.fromJson(value);
+        case 'NotesListList200Response':
+          return NotesListList200Response.fromJson(value);
         case 'PaginatedNoteList':
           return PaginatedNoteList.fromJson(value);
         case 'PatchedNoteWrite':

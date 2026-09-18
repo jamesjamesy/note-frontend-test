@@ -9,18 +9,20 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**notesCreate**](NotesApi.md#notescreate) | **POST** /api/notes/ | 
-[**notesDestroy**](NotesApi.md#notesdestroy) | **DELETE** /api/notes/{id}/ | 
-[**notesList**](NotesApi.md#noteslist) | **GET** /api/notes/ | 
-[**notesPartialUpdate**](NotesApi.md#notespartialupdate) | **PATCH** /api/notes/{id}/ | 
-[**notesRetrieve**](NotesApi.md#notesretrieve) | **GET** /api/notes/{id}/ | 
-[**notesUpdate**](NotesApi.md#notesupdate) | **PUT** /api/notes/{id}/ | 
+[**notesCreateCreate**](NotesApi.md#notescreatecreate) | **POST** /api/notes/create | ایجاد یادداشت جدید
+[**notesDeleteDestroy**](NotesApi.md#notesdeletedestroy) | **DELETE** /api/notes/delete/{id} | حذف یادداشت
+[**notesDetailRetrieve**](NotesApi.md#notesdetailretrieve) | **GET** /api/notes/detail/{id} | جزئیات یادداشت
+[**notesListList**](NotesApi.md#noteslistlist) | **GET** /api/notes/list | لیست یادداشت‌ها
+[**notesUpdatePartialUpdate**](NotesApi.md#notesupdatepartialupdate) | **PATCH** /api/notes/update/{id} | ویرایش جزئی یادداشت
+[**notesUpdateUpdate**](NotesApi.md#notesupdateupdate) | **PUT** /api/notes/update/{id} | ویرایش یادداشت
 
 
-# **notesCreate**
-> NotesCreate201Response notesCreate(noteWrite)
+# **notesCreateCreate**
+> NotesCreateCreate201Response notesCreateCreate(noteWrite)
 
+ایجاد یادداشت جدید
 
+یک یادداشت جدید می‌سازد و در صورت احراز هویت، آن را به کاربر متصل می‌کند.
 
 ### Example
 ```dart
@@ -34,10 +36,10 @@ final api_instance = NotesApi();
 final noteWrite = NoteWrite(); // NoteWrite | 
 
 try {
-    final result = api_instance.notesCreate(noteWrite);
+    final result = api_instance.notesCreateCreate(noteWrite);
     print(result);
 } catch (e) {
-    print('Exception when calling NotesApi->notesCreate: $e\n');
+    print('Exception when calling NotesApi->notesCreateCreate: $e\n');
 }
 ```
 
@@ -49,7 +51,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**NotesCreate201Response**](NotesCreate201Response.md)
+[**NotesCreateCreate201Response**](NotesCreateCreate201Response.md)
 
 ### Authorization
 
@@ -62,10 +64,12 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **notesDestroy**
-> NotesDestroy200Response notesDestroy(id)
+# **notesDeleteDestroy**
+> notesDeleteDestroy(id)
 
+حذف یادداشت
 
+حذف یادداشت بر اساس شناسه.
 
 ### Example
 ```dart
@@ -76,13 +80,12 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
 
 final api_instance = NotesApi();
-final id = 56; // int | A unique integer value identifying this note.
+final id = 56; // int | 
 
 try {
-    final result = api_instance.notesDestroy(id);
-    print(result);
+    api_instance.notesDeleteDestroy(id);
 } catch (e) {
-    print('Exception when calling NotesApi->notesDestroy: $e\n');
+    print('Exception when calling NotesApi->notesDeleteDestroy: $e\n');
 }
 ```
 
@@ -90,11 +93,58 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **int**| A unique integer value identifying this note. | 
+ **id** | **int**|  | 
 
 ### Return type
 
-[**NotesDestroy200Response**](NotesDestroy200Response.md)
+void (empty response body)
+
+### Authorization
+
+[tokenAuth](../README.md#tokenAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **notesDetailRetrieve**
+> NotesCreateCreate201Response notesDetailRetrieve(id)
+
+جزئیات یادداشت
+
+دریافت اطلاعات کامل یک یادداشت بر اساس شناسه.
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+// TODO Configure API key authorization: tokenAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
+
+final api_instance = NotesApi();
+final id = 56; // int | 
+
+try {
+    final result = api_instance.notesDetailRetrieve(id);
+    print(result);
+} catch (e) {
+    print('Exception when calling NotesApi->notesDetailRetrieve: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int**|  | 
+
+### Return type
+
+[**NotesCreateCreate201Response**](NotesCreateCreate201Response.md)
 
 ### Authorization
 
@@ -107,10 +157,12 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **notesList**
-> NotesList200Response notesList(page)
+# **notesListList**
+> NotesListList200Response notesListList(page)
 
+لیست یادداشت‌ها
 
+دریافت لیست یادداشت‌های کاربر یا یادداشت‌های عمومی به صورت صفحه‌بندی‌شده.
 
 ### Example
 ```dart
@@ -124,10 +176,10 @@ final api_instance = NotesApi();
 final page = 56; // int | A page number within the paginated result set.
 
 try {
-    final result = api_instance.notesList(page);
+    final result = api_instance.notesListList(page);
     print(result);
 } catch (e) {
-    print('Exception when calling NotesApi->notesList: $e\n');
+    print('Exception when calling NotesApi->notesListList: $e\n');
 }
 ```
 
@@ -139,7 +191,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**NotesList200Response**](NotesList200Response.md)
+[**NotesListList200Response**](NotesListList200Response.md)
 
 ### Authorization
 
@@ -152,10 +204,12 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **notesPartialUpdate**
-> NotesCreate201Response notesPartialUpdate(id, patchedNoteWrite)
+# **notesUpdatePartialUpdate**
+> NotesCreateCreate201Response notesUpdatePartialUpdate(id, patchedNoteWrite)
 
+ویرایش جزئی یادداشت
 
+ویرایش بخشی از اطلاعات یادداشت.
 
 ### Example
 ```dart
@@ -166,14 +220,14 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
 
 final api_instance = NotesApi();
-final id = 56; // int | A unique integer value identifying this note.
+final id = 56; // int | 
 final patchedNoteWrite = PatchedNoteWrite(); // PatchedNoteWrite | 
 
 try {
-    final result = api_instance.notesPartialUpdate(id, patchedNoteWrite);
+    final result = api_instance.notesUpdatePartialUpdate(id, patchedNoteWrite);
     print(result);
 } catch (e) {
-    print('Exception when calling NotesApi->notesPartialUpdate: $e\n');
+    print('Exception when calling NotesApi->notesUpdatePartialUpdate: $e\n');
 }
 ```
 
@@ -181,12 +235,12 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **int**| A unique integer value identifying this note. | 
+ **id** | **int**|  | 
  **patchedNoteWrite** | [**PatchedNoteWrite**](PatchedNoteWrite.md)|  | [optional] 
 
 ### Return type
 
-[**NotesCreate201Response**](NotesCreate201Response.md)
+[**NotesCreateCreate201Response**](NotesCreateCreate201Response.md)
 
 ### Authorization
 
@@ -199,55 +253,12 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **notesRetrieve**
-> NotesRetrieve200Response notesRetrieve(id)
+# **notesUpdateUpdate**
+> NotesCreateCreate201Response notesUpdateUpdate(id, noteWrite)
 
+ویرایش یادداشت
 
-
-### Example
-```dart
-import 'package:openapi/api.dart';
-// TODO Configure API key authorization: tokenAuth
-//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKey = 'YOUR_API_KEY';
-// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
-
-final api_instance = NotesApi();
-final id = 56; // int | A unique integer value identifying this note.
-
-try {
-    final result = api_instance.notesRetrieve(id);
-    print(result);
-} catch (e) {
-    print('Exception when calling NotesApi->notesRetrieve: $e\n');
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **int**| A unique integer value identifying this note. | 
-
-### Return type
-
-[**NotesRetrieve200Response**](NotesRetrieve200Response.md)
-
-### Authorization
-
-[tokenAuth](../README.md#tokenAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **notesUpdate**
-> NotesCreate201Response notesUpdate(id, noteWrite)
-
-
+ویرایش کامل عنوان، محتوا یا دسته‌بندی یادداشت.
 
 ### Example
 ```dart
@@ -258,14 +269,14 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
 
 final api_instance = NotesApi();
-final id = 56; // int | A unique integer value identifying this note.
+final id = 56; // int | 
 final noteWrite = NoteWrite(); // NoteWrite | 
 
 try {
-    final result = api_instance.notesUpdate(id, noteWrite);
+    final result = api_instance.notesUpdateUpdate(id, noteWrite);
     print(result);
 } catch (e) {
-    print('Exception when calling NotesApi->notesUpdate: $e\n');
+    print('Exception when calling NotesApi->notesUpdateUpdate: $e\n');
 }
 ```
 
@@ -273,12 +284,12 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **int**| A unique integer value identifying this note. | 
+ **id** | **int**|  | 
  **noteWrite** | [**NoteWrite**](NoteWrite.md)|  | 
 
 ### Return type
 
-[**NotesCreate201Response**](NotesCreate201Response.md)
+[**NotesCreateCreate201Response**](NotesCreateCreate201Response.md)
 
 ### Authorization
 

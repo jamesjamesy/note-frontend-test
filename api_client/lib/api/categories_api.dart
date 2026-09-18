@@ -16,69 +16,14 @@ class CategoriesApi {
 
   final ApiClient apiClient;
 
-  /// Performs an HTTP 'GET /api/categories/' operation and returns the [Response].
-  /// Parameters:
+  /// لیست دسته‌بندی‌ها
   ///
-  /// * [int] page:
-  ///   A page number within the paginated result set.
-  Future<Response> categoriesListWithHttpInfo({ int? page, Future<void>? abortTrigger, }) async {
+  /// دریافت تمامی دسته‌بندی‌های عمومی یادداشت‌ها.
+  ///
+  /// Note: This method returns the HTTP [Response].
+  Future<Response> categoriesListListWithHttpInfo({ Future<void>? abortTrigger, }) async {
     // ignore: prefer_const_declarations
-    final path = r'/api/categories/';
-
-    // ignore: prefer_final_locals
-    Object? postBody;
-
-    final queryParams = <QueryParam>[];
-    final headerParams = <String, String>{};
-    final formParams = <String, String>{};
-
-    if (page != null) {
-      queryParams.addAll(_queryParams('', 'page', page));
-    }
-
-    const contentTypes = <String>[];
-
-
-    return apiClient.invokeAPI(
-      path,
-      'GET',
-      queryParams,
-      postBody,
-      headerParams,
-      formParams,
-      contentTypes.isEmpty ? null : contentTypes.first,
-      abortTrigger: abortTrigger,
-    );
-  }
-
-  /// Parameters:
-  ///
-  /// * [int] page:
-  ///   A page number within the paginated result set.
-  Future<CategoriesList200Response?> categoriesList({ int? page, Future<void>? abortTrigger, }) async {
-    final response = await categoriesListWithHttpInfo(page: page, abortTrigger: abortTrigger,);
-    if (response.statusCode >= HttpStatus.badRequest) {
-      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
-    }
-    // When a remote server returns no body with a status of 204, we shall not decode it.
-    // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
-    // FormatException when trying to decode an empty string.
-    if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'CategoriesList200Response',) as CategoriesList200Response;
-    
-    }
-    return null;
-  }
-
-  /// Performs an HTTP 'GET /api/categories/{id}/' operation and returns the [Response].
-  /// Parameters:
-  ///
-  /// * [int] id (required):
-  ///   A unique integer value identifying this category.
-  Future<Response> categoriesRetrieveWithHttpInfo(int id, { Future<void>? abortTrigger, }) async {
-    // ignore: prefer_const_declarations
-    final path = r'/api/categories/{id}/'
-      .replaceAll('{id}', id.toString());
+    final path = r'/api/categories/list';
 
     // ignore: prefer_final_locals
     Object? postBody;
@@ -102,12 +47,11 @@ class CategoriesApi {
     );
   }
 
-  /// Parameters:
+  /// لیست دسته‌بندی‌ها
   ///
-  /// * [int] id (required):
-  ///   A unique integer value identifying this category.
-  Future<CategoriesRetrieve200Response?> categoriesRetrieve(int id, { Future<void>? abortTrigger, }) async {
-    final response = await categoriesRetrieveWithHttpInfo(id, abortTrigger: abortTrigger,);
+  /// دریافت تمامی دسته‌بندی‌های عمومی یادداشت‌ها.
+  Future<CategoriesListList200Response?> categoriesListList({ Future<void>? abortTrigger, }) async {
+    final response = await categoriesListListWithHttpInfo(abortTrigger: abortTrigger,);
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }
@@ -115,7 +59,7 @@ class CategoriesApi {
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
-      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'CategoriesRetrieve200Response',) as CategoriesRetrieve200Response;
+      return await apiClient.deserializeAsync(await _decodeBodyBytes(response), 'CategoriesListList200Response',) as CategoriesListList200Response;
     
     }
     return null;

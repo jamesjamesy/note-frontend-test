@@ -17,6 +17,8 @@ Method | HTTP request | Description
 
 
 
+ثبت‌نام کاربر جدید
+
 ### Example
 ```dart
 import 'package:openapi/api.dart';

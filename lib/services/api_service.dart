@@ -121,7 +121,7 @@ class ApiService {
 
   // واکشی یادداشت‌ها به صورت صفحه‌بندی شده توسط کلاینت رسمی OpenAPI
   Future<PaginatedResult<Note>> fetchNotes({int page = 1}) async {
-    final response = await _notesApi.notesList(page: page);
+    final response = await _notesApi.notesListList(page: page);
     if (response == null) {
       return PaginatedResult<Note>(items: []);
     }
@@ -156,9 +156,9 @@ class ApiService {
 
   // واکشی دسته‌بندی‌ها توسط کلاینت رسمی OpenAPI
   Future<List<Category>> fetchCategories() async {
-    final response = await _categoriesApi.categoriesList();
+    final response = await _categoriesApi.categoriesListList();
     if (response == null) return [];
-    return response.data.results
+    return response.data
         .map((c) => Category(id: c.id, name: c.name))
         .toList();
   }
@@ -174,7 +174,7 @@ class ApiService {
       content: content,
       category: categoryId,
     );
-    await _notesApi.notesCreate(noteWrite);
+    await _notesApi.notesCreateCreate(noteWrite);
   }
 
   // ویرایش یادداشت موجود توسط کلاینت رسمی OpenAPI
@@ -189,12 +189,12 @@ class ApiService {
       content: content,
       category: categoryId,
     );
-    await _notesApi.notesUpdate(id, noteWrite);
+    await _notesApi.notesUpdateUpdate(id, noteWrite);
   }
 
   // حذف یادداشت با متد DELETE توسط کلاینت رسمی OpenAPI
   Future<void> deleteNote(int id) async {
-    await _notesApi.notesDestroy(id);
+    await _notesApi.notesDeleteDestroy(id);
   }
 }
 

@@ -16,7 +16,10 @@ class RegisterApi {
 
   final ApiClient apiClient;
 
-  /// Performs an HTTP 'POST /api/register/' operation and returns the [Response].
+  /// ثبت‌نام کاربر جدید
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
   /// Parameters:
   ///
   /// * [Register] register (required):
@@ -46,6 +49,8 @@ class RegisterApi {
     );
   }
 
+  /// ثبت‌نام کاربر جدید
+  ///
   /// Parameters:
   ///
   /// * [Register] register (required):

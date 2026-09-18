@@ -9,59 +9,15 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**categoriesList**](CategoriesApi.md#categorieslist) | **GET** /api/categories/ | 
-[**categoriesRetrieve**](CategoriesApi.md#categoriesretrieve) | **GET** /api/categories/{id}/ | 
+[**categoriesListList**](CategoriesApi.md#categorieslistlist) | **GET** /api/categories/list | لیست دسته‌بندی‌ها
 
 
-# **categoriesList**
-> CategoriesList200Response categoriesList(page)
+# **categoriesListList**
+> CategoriesListList200Response categoriesListList()
 
+لیست دسته‌بندی‌ها
 
-
-### Example
-```dart
-import 'package:openapi/api.dart';
-// TODO Configure API key authorization: tokenAuth
-//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKey = 'YOUR_API_KEY';
-// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
-
-final api_instance = CategoriesApi();
-final page = 56; // int | A page number within the paginated result set.
-
-try {
-    final result = api_instance.categoriesList(page);
-    print(result);
-} catch (e) {
-    print('Exception when calling CategoriesApi->categoriesList: $e\n');
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **page** | **int**| A page number within the paginated result set. | [optional] 
-
-### Return type
-
-[**CategoriesList200Response**](CategoriesList200Response.md)
-
-### Authorization
-
-[tokenAuth](../README.md#tokenAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **categoriesRetrieve**
-> CategoriesRetrieve200Response categoriesRetrieve(id)
-
-
+دریافت تمامی دسته‌بندی‌های عمومی یادداشت‌ها.
 
 ### Example
 ```dart
@@ -72,25 +28,21 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('tokenAuth').apiKeyPrefix = 'Bearer';
 
 final api_instance = CategoriesApi();
-final id = 56; // int | A unique integer value identifying this category.
 
 try {
-    final result = api_instance.categoriesRetrieve(id);
+    final result = api_instance.categoriesListList();
     print(result);
 } catch (e) {
-    print('Exception when calling CategoriesApi->categoriesRetrieve: $e\n');
+    print('Exception when calling CategoriesApi->categoriesListList: $e\n');
 }
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **int**| A unique integer value identifying this category. | 
+This endpoint does not need any parameter.
 
 ### Return type
 
-[**CategoriesRetrieve200Response**](CategoriesRetrieve200Response.md)
+[**CategoriesListList200Response**](CategoriesListList200Response.md)
 
 ### Authorization
 
